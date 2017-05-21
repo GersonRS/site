@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +16,15 @@ use Illuminate\Http\Request;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+})->name('user');
+
+Route::group(['prefix'=>'client', 'middleware' => 'auth:api', 'as'=>'client.'], function(){
+    Route::resource('order',
+        'Api\Client\ClientCheckoutController', [
+            'except' => ['create', 'edit', 'destroy','update']
+        ]);
+    Route::get('/products', 'Api\Client\ClientProductController@index');
+    Route::get('/categories', 'Api\Client\ClientCategoryController@index');
+    Route::get('/companies', 'Api\Client\ClientCompanyController@index');
 });
+
